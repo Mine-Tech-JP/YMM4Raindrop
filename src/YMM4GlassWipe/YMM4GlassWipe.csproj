@@ -1,0 +1,89 @@
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AssemblyName>YMM4GlassWipe</AssemblyName>
+    <RootNamespace>YMM4GlassWipe</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <RepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepositoryRoot>
+    <PathMap>$(RepositoryRoot)=.</PathMap>
+    <ShaderCompilerProject>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\tools\YMM4GlassWipe.ShaderCompiler\YMM4GlassWipe.ShaderCompiler.csproj'))</ShaderCompilerProject>
+    <ShaderCompilerAssembly>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\..\tools\YMM4GlassWipe.ShaderCompiler\bin\$(Configuration)\$(TargetFramework)\YMM4GlassWipe.ShaderCompiler.dll'))</ShaderCompilerAssembly>
+    <GlassCompositeShaderSource>$(MSBuildProjectDirectory)\Shaders\GlassComposite.hlsl</GlassCompositeShaderSource>
+    <GlassCompositeShaderOutput>$(MSBuildProjectDirectory)\Shaders\GlassComposite.cso</GlassCompositeShaderOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Brushes\hand-mask.png"
+                      LogicalName="YMM4GlassWipe.Assets.Brushes.hand-mask.png" />
+    <EmbeddedResource Include="Assets\Brushes\shoe-print-mask.png"
+                      LogicalName="YMM4GlassWipe.Assets.Brushes.shoe-print-mask.png" />
+    <EmbeddedResource Include="Shaders\GlassComposite.cso"
+                      LogicalName="YMM4GlassWipe.Shaders.GlassComposite.cso" />
+    <EmbeddedResource Include="Shaders\OutsideDropletPhysics.cso"
+                      LogicalName="YMM4GlassWipe.Shaders.OutsideDropletPhysics.cso" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(ShaderCompilerProject)"
+                      ReferenceOutputAssembly="false"
+                      Private="false" />
+    <Reference Include="YukkuriMovieMaker.Controls">
+      <HintPath>$(YMM4DirPath)YukkuriMovieMaker.Controls.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="YukkuriMovieMaker.Plugin">
+      <HintPath>$(YMM4DirPath)YukkuriMovieMaker.Plugin.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SharpGen.Runtime">
+      <HintPath>$(YMM4DirPath)SharpGen.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SharpGen.Runtime.COM">
+      <HintPath>$(YMM4DirPath)SharpGen.Runtime.COM.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Vortice.Direct2D1">
+      <HintPath>$(YMM4DirPath)Vortice.Direct2D1.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Vortice.DirectX">
+      <HintPath>$(YMM4DirPath)Vortice.DirectX.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Vortice.DXGI">
+      <HintPath>$(YMM4DirPath)Vortice.DXGI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Vortice.Mathematics">
+      <HintPath>$(YMM4DirPath)Vortice.Mathematics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="ValidateYMM4Directory" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(YMM4DirPath)' == ''"
+           Text="Directory.Build.propsにYMM4DirPathを設定してください。" />
+    <Error Condition="'$(YMM4DirPath)' != '' and !Exists('$(YMM4DirPath)YukkuriMovieMaker.Plugin.dll')"
+           Text="YMM4DirPathにYukkuriMovieMaker.Plugin.dllが見つかりません。" />
+  </Target>
+
+  <Target Name="CompileGlassCompositeShader"
+          BeforeTargets="PrepareResources"
+          DependsOnTargets="ResolveProjectReferences">
+    <Error Condition="'$(DOTNET_HOST_PATH)' == '' or !Exists('$(DOTNET_HOST_PATH)')"
+           Text="ビルドに使用中のdotnetホストを特定できません。" />
+    <Error Condition="!Exists('$(ShaderCompilerAssembly)')"
+           Text="シェーダーコンパイラが見つかりません: $(ShaderCompilerAssembly)" />
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(ShaderCompilerAssembly)&quot; &quot;$(GlassCompositeShaderSource)&quot; &quot;$(GlassCompositeShaderOutput)&quot;" />
+    <Exec Command="&quot;$(DOTNET_HOST_PATH)&quot; &quot;$(ShaderCompilerAssembly)&quot; &quot;$(MSBuildProjectDirectory)\Shaders\OutsideDropletPhysics.hlsl&quot; &quot;$(MSBuildProjectDirectory)\Shaders\OutsideDropletPhysics.cso&quot;" />
+  </Target>
+</Project>

@@ -1,0 +1,39 @@
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpGen.Runtime">
+      <HintPath>$(YMM4DirPath)SharpGen.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Vortice.D3DCompiler">
+      <HintPath>$(YMM4DirPath)Vortice.D3DCompiler.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Vortice.DirectX">
+      <HintPath>$(YMM4DirPath)Vortice.DirectX.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Content Include="$(YMM4DirPath)D3DCompiler_47_cor3.dll"
+             Link="D3DCompiler_47_cor3.dll"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="ValidateShaderCompilerFiles" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(YMM4DirPath)' == ''"
+           Text="Directory.Build.propsにYMM4DirPathを設定してください。" />
+    <Error Condition="!Exists('$(YMM4DirPath)Vortice.D3DCompiler.dll')"
+           Text="YMM4DirPathにVortice.D3DCompiler.dllが見つかりません。" />
+    <Error Condition="!Exists('$(YMM4DirPath)D3DCompiler_47_cor3.dll')"
+           Text="YMM4DirPathにD3DCompiler_47_cor3.dllが見つかりません。" />
+  </Target>
+</Project>

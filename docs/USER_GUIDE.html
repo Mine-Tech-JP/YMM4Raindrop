@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="雫と拭痕（しずくとふきあと） – RainDrop &amp; GlassWipe for YMM4の導入、拭き取りと雨だれの設定例、連続拭き、ブラシとプリセットの保存を説明するユーザーズマニュアルです。">
+  <title>雫と拭痕（しずくとふきあと） – RainDrop &amp; GlassWipe for YMM4 ユーザーズマニュアル</title>
+  <style>
+    :root {
+      --bg: #f3fbff;
+      --surface: rgba(255, 255, 255, 0.86);
+      --surface-solid: #ffffff;
+      --surface-muted: #edf8fe;
+      --text: #153b52;
+      --muted: #3c6176;
+      --line: rgba(51, 132, 175, 0.18);
+      --brand: #137da4;
+      --brand-strong: #0b5d82;
+      --brand-soft: #e1f6ff;
+      --accent: #086d9c;
+      --accent-soft: #e7f5ff;
+      --success: #2f805e;
+      --success-soft: #e0f3e9;
+      --warning: #9a641d;
+      --warning-soft: #fff3d7;
+      --shadow: 0 18px 50px rgba(55, 135, 180, 0.12);
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --hero-start: #fbfeff;
+      --hero-mid: #e1f7ff;
+      --hero-end: #bdeafb;
+      --hero-glow: rgba(255, 255, 255, 0.7);
+      --hero-glass-edge: rgba(255, 255, 255, 0.82);
+      --on-brand: #ffffff;
+      --content: 1180px;
+      font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #081b2a;
+      --surface: rgba(14, 37, 54, 0.92);
+      --surface-solid: #0e2536;
+      --surface-muted: #132f43;
+      --text: #eaf7ff;
+      --muted: #aac8dc;
+      --line: rgba(165, 224, 255, 0.18);
+      --brand: #78d2f4;
+      --brand-strong: #b0e8ff;
+      --brand-soft: #123e55;
+      --accent: #9edfff;
+      --accent-soft: #153c56;
+      --success: #79d3a8;
+      --success-soft: #19382c;
+      --warning: #f3c16f;
+      --warning-soft: #3a3020;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+      --hero-start: #0d2439;
+      --hero-mid: #10364c;
+      --hero-end: #15516a;
+      --hero-glow: rgba(125, 213, 255, 0.13);
+      --hero-glass-edge: rgba(174, 227, 255, 0.2);
+      --on-brand: #08293d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% -10%, rgba(129, 222, 251, 0.24), transparent 34rem),
+        radial-gradient(circle at 95% 12%, rgba(174, 213, 255, 0.18), transparent 28rem),
+        var(--bg);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    a {
+      color: var(--brand-strong);
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.2em;
+    }
+
+    a:hover {
+      color: var(--accent);
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: var(--on-brand);
+      background: var(--brand-strong);
+      transform: translateY(-180%);
+      transition: transform 0.2s ease;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      width: min(calc(100% - 32px), var(--content));
+      margin: 16px auto 0;
+    }
+
+    .tool-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 6px 18px rgba(55, 135, 180, 0.08);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      backdrop-filter: blur(12px);
+    }
+
+    .tool-button:hover {
+      border-color: var(--brand);
+      color: var(--brand-strong);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      width: min(calc(100% - 32px), var(--content));
+      margin: 14px auto 28px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        linear-gradient(118deg, var(--hero-start), var(--hero-mid) 58%, var(--hero-end)),
+        var(--brand-soft);
+      box-shadow: var(--shadow);
+      color: var(--text);
+    }
+
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      border: 1px solid var(--hero-glass-edge);
+      border-radius: 999px;
+      content: "";
+      pointer-events: none;
+    }
+
+    .hero::before {
+      top: -190px;
+      right: -80px;
+      width: 430px;
+      height: 430px;
+      background: radial-gradient(circle, var(--hero-glow), transparent 68%);
+    }
+
+    .hero::after {
+      right: 190px;
+      bottom: -235px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, var(--hero-glow), transparent 68%);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+      gap: 34px;
+      align-items: center;
+      padding: clamp(30px, 6vw, 68px);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--brand-strong);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+      line-height: 1.35;
+    }
+
+    h1 {
+      max-width: 16em;
+      margin-bottom: 18px;
+      font-size: clamp(2rem, 5vw, 4.35rem);
+      letter-spacing: -0.035em;
+    }
+
+    .hero-copy {
+      max-width: 44em;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.8vw, 1.18rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 9px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--brand-strong);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .button-link.primary {
+      border-color: var(--brand-strong);
+      color: var(--on-brand);
+      background: var(--brand-strong);
+    }
+
+    .button-link:hover {
+      color: var(--brand-strong);
+      border-color: var(--brand);
+      background: var(--surface-solid);
+    }
+
+    .button-link.primary:hover {
+      color: var(--on-brand);
+      border-color: var(--brand);
+      background: var(--brand);
+    }
+
+    .hero-summary {
+      display: grid;
+      gap: 12px;
+      padding: 20px;
+      border: 1px solid var(--hero-glass-edge);
+      border-radius: 22px;
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+    }
+
+    .summary-item {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .summary-number {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: var(--brand-soft);
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+
+    .summary-item strong,
+    .summary-item span {
+      display: block;
+    }
+
+    .summary-item span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 28px;
+      width: min(calc(100% - 32px), var(--content));
+      margin: 0 auto 56px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: 0 12px 35px rgba(55, 135, 180, 0.08);
+      backdrop-filter: blur(14px);
+    }
+
+    .toc-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .toc-list {
+      display: grid;
+      gap: 3px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 10px;
+      border-radius: 9px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .toc a:hover,
+    .toc a[aria-current="true"] {
+      color: var(--brand-strong);
+      background: var(--brand-soft);
+    }
+
+    .toc-meta {
+      margin: 14px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .section {
+      margin-bottom: 26px;
+      padding: clamp(24px, 4vw, 42px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: 0 14px 38px rgba(55, 135, 180, 0.075);
+      backdrop-filter: blur(12px);
+    }
+
+    .section-kicker {
+      margin: 0 0 5px;
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1.08rem;
+    }
+
+    p {
+      margin-top: 0;
+    }
+
+    .lead {
+      max-width: 48em;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 1.03rem;
+    }
+
+    .callout {
+      margin: 22px 0;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--brand);
+      border-radius: var(--radius-sm);
+      background: var(--brand-soft);
+    }
+
+    .callout.warning {
+      border-left-color: var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .callout.success {
+      border-left-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      counter-reset: step;
+      list-style: none;
+    }
+
+    .steps li {
+      position: relative;
+      min-height: 62px;
+      padding: 15px 18px 15px 70px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface-solid);
+      counter-increment: step;
+    }
+
+    .steps li::before {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      color: var(--on-brand);
+      background: var(--brand);
+      content: counter(step);
+      font-weight: 900;
+    }
+
+    .steps strong {
+      display: block;
+      line-height: 1.5;
+    }
+
+    .steps span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .grid-2,
+    .grid-3,
+    .preset-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .preset-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface-solid);
+    }
+
+    .card p:last-child,
+    .card ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-number {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      color: var(--brand-strong);
+      background: var(--brand-soft);
+      font-size: 0.85rem;
+      font-weight: 900;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface-muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .tag.featured {
+      color: var(--brand-strong);
+      border-color: transparent;
+      background: var(--brand-soft);
+    }
+
+    .path-card {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .path-visual {
+      display: grid;
+      place-items: center;
+      min-height: 142px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px),
+        var(--surface-muted);
+      background-size: 22px 22px;
+    }
+
+    .path-visual svg {
+      width: 100%;
+      max-width: 240px;
+      height: 110px;
+      overflow: visible;
+    }
+
+    .path-line {
+      fill: none;
+      stroke: var(--brand);
+      stroke-width: 7;
+      stroke-linecap: round;
+    }
+
+    .path-guide {
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 2;
+      stroke-dasharray: 5 6;
+      opacity: 0.55;
+    }
+
+    .path-point {
+      fill: var(--surface-solid);
+      stroke: var(--brand-strong);
+      stroke-width: 4;
+    }
+
+    .path-point.control {
+      stroke: var(--accent);
+    }
+
+    .path-content {
+      padding: 19px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 18px 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface-solid);
+    }
+
+    th,
+    td {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--brand-strong);
+      background: var(--brand-soft);
+      font-size: 0.86rem;
+      white-space: nowrap;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .meter-list {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .meter-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) 68px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .meter-label,
+    .meter-value {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .meter-value {
+      text-align: right;
+    }
+
+    .meter {
+      overflow: hidden;
+      height: 13px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .meter span {
+      display: block;
+      width: var(--value);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--brand), #a6e7ff);
+    }
+
+    .setting-list {
+      display: grid;
+      grid-template-columns: minmax(145px, 0.3fr) minmax(0, 0.7fr);
+      margin: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .setting-list dt,
+    .setting-list dd {
+      margin: 0;
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .setting-list dt {
+      color: var(--brand-strong);
+      font-weight: 900;
+    }
+
+    .setting-list dd {
+      color: var(--muted);
+    }
+
+    details {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-solid);
+    }
+
+    summary {
+      padding: 14px 18px;
+      cursor: pointer;
+      color: var(--brand-strong);
+      font-weight: 900;
+    }
+
+    details > div {
+      padding: 0 18px 16px;
+    }
+
+    .trouble-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .trouble-item {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.34fr) minmax(0, 0.66fr);
+      gap: 18px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface-solid);
+    }
+
+    .trouble-item strong {
+      color: var(--brand-strong);
+    }
+
+    .trouble-item p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    code {
+      padding: 0.12em 0.38em;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--brand-strong);
+      background: var(--surface-muted);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.92em;
+    }
+
+    footer {
+      width: min(calc(100% - 32px), var(--content));
+      margin: 0 auto 36px;
+      padding: 22px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.86rem;
+    }
+
+    .mobile-toc-button {
+      display: none;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      background: var(--surface);
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-summary {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .summary-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .summary-number {
+        margin: auto;
+      }
+
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+        display: none;
+      }
+
+      .toc.is-open {
+        display: block;
+      }
+
+      .mobile-toc-button {
+        display: block;
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        font-size: 15px;
+      }
+
+      .topbar,
+      .hero,
+      .shell,
+      footer {
+        width: min(calc(100% - 20px), var(--content));
+      }
+
+      .topbar {
+        justify-content: stretch;
+      }
+
+      .tool-button {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .hero {
+        border-radius: 24px;
+      }
+
+      .hero-inner {
+        padding: 28px 22px;
+      }
+
+      .hero-summary,
+      .grid-2,
+      .grid-3,
+      .preset-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 24px 19px;
+        border-radius: 20px;
+      }
+
+      .setting-list,
+      .trouble-item {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .setting-list dd {
+        padding-top: 0;
+      }
+
+      .meter-row {
+        grid-template-columns: 58px minmax(0, 1fr) 56px;
+        gap: 8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media print {
+      :root,
+      html[data-theme="dark"] {
+        --bg: #ffffff;
+        --surface: #ffffff;
+        --surface-solid: #ffffff;
+        --surface-muted: #f5f5f5;
+        --text: #173b50;
+        --muted: #456476;
+        --line: #d7e8f1;
+        --brand: #116d96;
+        --brand-strong: #0b587d;
+        --brand-soft: #e8f7ff;
+      }
+
+      body {
+        background: #ffffff;
+        font-size: 11pt;
+      }
+
+      .topbar,
+      .toc,
+      .mobile-toc-button,
+      .hero-actions {
+        display: none !important;
+      }
+
+      .hero,
+      .shell,
+      footer {
+        width: 100%;
+      }
+
+      .hero {
+        color: var(--text);
+        background: #ffffff;
+        box-shadow: none;
+      }
+
+      .shell {
+        display: block;
+      }
+
+      .section {
+        break-inside: avoid;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      a {
+        color: inherit;
+      }
+    }
+
+    .section :is(a, code) { overflow-wrap: anywhere; }
+    .section > :is(ul, ol) { padding-left: 1.6rem; }
+    .section li { margin-block: 0.45rem; }
+    .section a[id] { display: block; scroll-margin-top: 1.5rem; }
+    .section .table-wrap table { min-width: 560px; }
+    .section td:first-child { min-width: 8em; }
+    .table-hint { display: none; }
+    @media (max-width: 680px) {
+      .table-hint { display: block; margin-bottom: -8px; color: var(--muted); font-size: 0.85rem; }
+    }
+    .toc { max-height: calc(100vh - 48px); overflow-y: auto; }
+    @media (max-width: 900px) { .toc { max-height: none; } }
+    @media print {
+      .section .table-wrap { overflow: visible; }
+      .section .table-wrap table { min-width: 0; font-size: 9pt; }
+      .section .table-wrap th { white-space: normal; }
+      .section { break-inside: auto; }
+      tr { break-inside: avoid; }
+      thead { display: table-header-group; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+  <div class="topbar" aria-label="表示設定">
+    <button class="tool-button" id="themeButton" type="button" aria-pressed="false"><span aria-hidden="true">◐</span> 配色を切り替える</button>
+    <button class="tool-button" id="printButton" type="button"><span aria-hidden="true">▤</span> 印刷する</button>
+  </div>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">雫と拭痕 – RainDrop &amp; GlassWipe for YMM4 · by Mine-Tech</p>
+        <h1>雫と拭痕<br>ユーザーズマニュアル</h1>
+        <p class="hero-copy">水滴、曇り、拭き取りの設定と使い方。初めて使う方は導入から、設定を調べたい方は目次から目的の章へ進んでください。</p>
+        <p>ユーザーズマニュアル / v1.0.0 / 2026年9月26日</p>
+        <div class="hero-actions">
+          <a class="button-link primary" href="#install">導入から始める</a>
+          <a class="button-link" href="#outside-droplets">水滴と雨だれの設定</a>
+          <a class="button-link" href="#trouble">困ったとき</a>
+        </div>
+      </div>
+      <div class="hero-summary" aria-label="主な使い方">
+        <div class="summary-item"><span class="summary-number">01</span><div><strong>曇りを拭く</strong><span>軌跡とブラシを選ぶ</span></div></div>
+        <div class="summary-item"><span class="summary-number">02</span><div><strong>雨だれを加える</strong><span>出現、落下、合体を調整</span></div></div>
+        <div class="summary-item"><span class="summary-number">03</span><div><strong>設定を残す</strong><span>プリセットと画像の管理</span></div></div>
+      </div>
+    </div>
+  </header>
+  <div class="shell">
+    <div>
+      <button class="mobile-toc-button" id="tocButton" type="button" aria-expanded="false" aria-controls="toc">目次を表示</button>
+      <nav class="toc" id="toc" aria-label="ページ内目次">
+        <p class="toc-title">CONTENTS</p>
+        <ol class="toc-list">
+<li><strong>はじめに</strong><ul>
+<li><a href="#overview">できること</a></li>
+<li><a href="#install">導入とエフェクトの追加</a></li>
+<li><a href="#try-defaults">初期設定で動きを確認する</a></li>
+<li><a href="#quick-start">目的別の設定例</a></li>
+</ul></li>
+<li><strong>基本の調整</strong><ul>
+<li><a href="#appearance">曇りの見た目</a></li>
+<li><a href="#outside-droplets">水滴と雨だれの設定</a></li>
+<li><a href="#patterns">拭き方と点のつなぎ方</a></li>
+<li><a href="#timing">拭き取りの開始時間と進み方</a></li>
+<li><a href="#brush">ブラシの形と大きさ</a></li>
+<li><a href="#continuous-wipe">手形・靴跡・ユーザー画像をつなげて拭く</a></li>
+<li><a href="#region">効果をかける範囲</a></li>
+</ul></li>
+<li><strong>応用と保存</strong><ul>
+<li><a href="#detailed">詳細設定で軌跡を作る</a></li>
+<li><a href="#user-brush">PNG画像をブラシにする</a></li>
+<li><a href="#presets">よく使う設定をプリセットに保存する</a></li>
+<li><a href="#save">保存、バックアップ、別のPCへの移行</a></li>
+</ul></li>
+<li><strong>困ったときと資料</strong><ul>
+<li><a href="#trouble">困ったとき</a></li>
+<li><a href="#quality">描画品質と表示の確認</a></li>
+<li><a href="#debug-view">デバッグ表示を使う</a></li>
+<li><a href="#defaults">初期値一覧</a></li>
+<li><a href="#license">ライセンスとソースコード</a></li>
+<li><a href="#disclaimer">免責事項</a></li>
+</ul></li>
+</ol>
+        <p class="toc-meta">このHTMLは単体で閲覧できます。外部フォントやスクリプトを読み込みません。</p>
+      </nav>
+    </div>
+    <main id="main">
+      <section class="section" id="overview">
+        <p class="section-kicker">01 / GUIDE</p>
+        <h2>できること</h2>
+<p>雫と拭痕（しずくとふきあと）は、映像に曇りやホコリを思わせる層を重ね、ブラシが通った場所を拭き取るYMM4用の映像エフェクトです。
+ガラスの外側に水滴や雨だれを加え、曇った窓を内側から拭くような演出も作れます。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>作りたい演出</th>
+<th>主に使う設定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>曇ったガラスを拭く</td>
+<td>曇り量、ぼかし量、拭き方、ブラシ</td>
+</tr>
+<tr>
+<td>映像に水滴や雨だれを重ねる</td>
+<td>外側の水滴量、水滴を垂らす、雨の降り始め</td>
+</tr>
+<tr>
+<td>水滴のついた窓を内側から拭く</td>
+<td>曇りと水滴を両方有効にする</td>
+</tr>
+</tbody></table></div>
+<p><strong>外側の水滴は、ブラシで拭いても消えません。</strong>
+曇った部分では背景と水滴が一緒にぼけ、拭いた部分では水滴が鮮明に見えます。</p>
+      </section>
+
+      <section class="section" id="install">
+        <p class="section-kicker">02 / GUIDE</p>
+        <h2>導入とエフェクトの追加</h2>
+<h3>動作環境</h3>
+<ul>
+<li>ゆっくりMovieMaker4 v4.56.1.0以降</li>
+<li>64-bit版のWindows 10 Version 2004（build 19041）以降、またはWindows 11</li>
+<li>DirectX 11対応GPU</li>
+</ul>
+<p>本プラグインはMine-Techが開発した非公式の第三者製プラグインです。</p>
+<h3>インストール</h3>
+<p>手順2と3は、配布形式に応じてどちらか一方だけを行います。</p>
+<ol>
+<li>YMM4を終了します。</li>
+<li>配布された<code>.ymme</code>がある場合はダブルクリックし、YMM4の案内に従ってインストールします。</li>
+<li>DLLで導入する場合は、<code>YMM4GlassWipe.dll</code>をYMM4の<code>user\plugin\YMM4GlassWipe</code>へ配置します。</li>
+<li>YMM4を起動します。</li>
+</ol>
+<p>同じDLLを複数のプラグインフォルダーへ残さないようにしてください。</p>
+<h3>アイテムへ追加する</h3>
+<ol>
+<li>タイムラインで映像アイテム、画像アイテム、またはエフェクトアイテムを選びます。</li>
+<li>「映像エフェクト」を追加し、「描画」から「雫と拭痕」を選びます。</li>
+</ol>
+<p>YMM4側で本エフェクトのデフォルトを変更していない場合、新しく追加したエフェクトは、「設定方法」が「標準設定」になっています。
+追加できたら、<a href="#try-defaults">初期設定で動きを確認する</a>へ進みます。</p>
+<p>エフェクトアイテムで使う場合は、YMM4側の「領域」も確認します。
+その領域が小さいと、プラグインで「入力領域全体」を選んでも、その小さい範囲だけに効果がかかります。</p>
+<h3 id="setting-modes">設定方法と項目の表示条件</h3>
+<p>本書では、詳細設定だけの項目を「詳細設定のみ」と記します。詳細設定へ切り替えただけでは表示されず、軌跡の種類も選ぶ必要がある項目があります。</p>
+<div class="table-wrap"><table><thead><tr><th>設定方法と軌跡の種類</th><th>主に使う項目</th></tr></thead><tbody><tr><td>標準設定／詳細設定の定型軌跡</td><td>拭き方、始点と終点、進行度。往復回数などは選んだ拭き方に応じて表示します。</td></tr><tr><td>詳細設定のみ：キーフレーム</td><td>軌跡のX、Y、接触率。拭き取り強度などの詳細ブラシ項目も表示します。</td></tr><tr><td>詳細設定のみ：カスタム軌跡</td><td>ストロークと制御点の編集。拭き取り強度などの詳細ブラシ項目も表示します。</td></tr><tr><td>詳細設定のみ：すべての軌跡</td><td>軌跡の種類、軌跡グループのプリセット、デバッグ表示。</td></tr></tbody></table></div>
+<p>曇りの基本項目、水滴、領域、ブラシ形状は両方の設定方法で使えます。形状やON／OFFなどによる追加の表示条件は各章で説明します。</p>
+      </section>
+
+      <section class="section" id="try-defaults">
+        <p class="section-kicker">03 / GUIDE</p>
+        <h2>初期設定で動きを確認する</h2>
+<p>初期設定は、曇り、拭き取り、水滴、雨だれを一度に確認できる「全部入り」の状態です。
+まずは設定を変えずに動かし、それぞれの機能がどのように重なるかを確認します。</p>
+<h3>準備</h3>
+<p>この例は、YMM4側で本エフェクトのデフォルトを変更していない場合の動作です。保存済み設定では異なる場合があるため、<a href="#defaults">初期値一覧</a>と比較してください。</p>
+<ol>
+<li>15秒程度の映像または画像アイテムを用意します。</li>
+<li>「雫と拭痕」を追加します。</li>
+<li>設定を変更せず、アイテムの先頭から12秒以上プレビューします。</li>
+</ol>
+<h3>見るポイント</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>15秒のアイテムでの再生位置</th>
+<th>確認できる動き</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0秒から0.5秒</td>
+<td>入力領域全体に曇りがかかり、拭き取りはまだ始まりません。</td>
+</tr>
+<tr>
+<td>0.5秒から3秒</td>
+<td>手形の拭き跡が円弧に沿って3.5回往復し、往復する位置を右下方向へずらします。最後は終点側で止まり、手形の跡は「連続拭き」によってつながります。</td>
+</tr>
+<tr>
+<td>1秒から11秒</td>
+<td>最初の水滴が順に現れます。簡易物理では大きさに応じて滴が滑り、接触した滴が合体します。落下や合体の時刻は滴ごとに異なります。</td>
+</tr>
+<tr>
+<td>3秒以降</td>
+<td>完成した拭き跡を維持します。外側の水滴は拭き取られず、曇りが消えた場所では鮮明に見えます。</td>
+</tr>
+</tbody></table></div>
+<p>「出現期間」の10秒は最初の水滴が現れる期間です。「雨の補給」が200%なので、その後も追加の雨を補給します。画面内の滴が上限に達した場合は補給を見送ります。</p>
+<p>この動作から、拭き取りと水滴は別々に進むこと、「連続拭き」は手形の跡をつなぐ機能であることを確認できます。
+初期動作を確認したら、次の「目的別の設定例」で目的に合わせて設定を変えます。</p>
+      </section>
+
+      <section class="section" id="quick-start">
+        <p class="section-kicker">04 / GUIDE</p>
+        <h2>目的別の設定例</h2>
+<p>次の設定例は、動きと見た目を確認するための出発点です。
+素材に合わせて位置や大きさを調整しながらプレビューしてください。</p>
+<p>各例は個別に試せます。映像または画像アイテムへエフェクトを追加し、「設定方法」を「標準設定」にしてから始めます。3つ目の例は、水滴の例に曇りと拭き取りを加えます。</p>
+<h3>中央を左から右へ拭く</h3>
+<p>10秒程度の映像または画像アイテムにエフェクトを追加し、次の順に設定します。</p>
+<ol>
+<li>「領域」の形状を「入力領域全体」にします。</li>
+<li>「外側の水滴量」を0%にします。</li>
+<li>「曇り量」を90%、「ぼかし量」を10pxにします。</li>
+<li>「拭き方」を「一回拭き（直線）」にし、始点をX 25% / Y 50%、終点をX 75% / Y 50%にします。</li>
+<li>「ブラシ」の形状を「円」、直径を140pxにします。</li>
+<li>「時間指定方式」を「秒数」にし、描画開始秒を1秒、描画完了秒を3秒にします。</li>
+<li>先頭からプレビューします。1秒から3秒の間に中央を拭き、その後は拭き跡を維持します。</li>
+</ol>
+<p>手で拭く形に変える場合は、形状を「手形」にします。
+手形、靴跡、ユーザー画像は「サイズ倍率」で大きさを調整します。
+倍率の基準と範囲は<a href="#brush">ブラシの形と大きさ</a>を参照してください。
+形状を手形にすると、初期設定と同じく「連続拭き」がONになり、手形の跡が移動に沿ってつながります。
+この設定例の「一回拭き（直線）」は、一度だけ拭く動きのままです。</p>
+<h3>水滴や雨だれだけを重ねる</h3>
+<ol>
+<li>「曇り量」を0%にします。</li>
+<li>「外側の水滴量」を70%、「水滴の濃さ」を70%にします。</li>
+<li>「水滴の見た目」を「黒い輪郭」、「輪郭の濃さ」を40%にします。</li>
+<li>「水滴を垂らす」をONにします。</li>
+<li>「雨の降り始め」をOFFにしてプレビューすると、先頭から水滴を表示できます。</li>
+</ol>
+<p>途中から水滴が現れる演出にする場合は、「雨の降り始め」をONにします。
+たとえば出現開始時間を1秒、出現期間を3秒にすると、1秒後から4秒後にかけて滴が順に現れます。
+静止した水滴だけを見せる場合は、「水滴を垂らす」をOFFにします。</p>
+<p>簡易物理では、OFFにしても雨の補給と接触合体は続きます。追加の雨も止める場合は「雨の補給」を0%、合体も止める場合は「水滴の合体」をOFFにします。</p>
+<h3>水滴のついた窓を内側から拭く</h3>
+<p>上の水滴の例を設定した後、「曇り量」を90%、「ぼかし量」を10pxにします。
+「中央を左から右へ拭く」の例の拭き方、始点と終点、ブラシ、描画時間を設定します。外側の水滴量は70%を維持します。
+水滴を先に見せたい場合は、水滴の出現開始時間を拭き取りの描画開始より早くします。</p>
+<p>拭いた場所では曇りが減り、窓の外側に残った水滴がはっきり見えるようになります。
+水滴の出現時間と拭き取りの描画時間は、それぞれ別に設定します。</p>
+      </section>
+
+      <section class="section" id="appearance">
+        <p class="section-kicker">05 / GUIDE</p>
+        <h2>曇りの見た目</h2>
+<p><strong>表示条件：</strong>この章の項目は標準設定と詳細設定の両方で使えます。曇り量が固定0%の場合は、曇り量以外の項目を非表示にします。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>調整する内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>曇り量</td>
+<td>曇りの強さ。0%で曇りを表示しません。</td>
+</tr>
+<tr>
+<td>ぼかし量</td>
+<td>曇っている部分の映像をぼかす量。</td>
+</tr>
+<tr>
+<td>曇り色</td>
+<td>曇りに混ぜる色。</td>
+</tr>
+<tr>
+<td>色の混合量</td>
+<td>曇り色を混ぜる強さ。</td>
+</tr>
+<tr id="fog-noise">
+<td>曇りノイズ</td>
+<td>曇り色に濃淡を加えます。初期値は10%、0%で無効になります。</td>
+</tr>
+</tbody></table></div>
+<p>曇り量を固定0%にすると、「ぼかし量」「曇り色」「色の混合量」「曇りノイズ」は非表示になります。
+Animationの有効な設定値に0%より大きい値が含まれる場合は、現在フレームの曇り量が0%でも表示されます。</p>
+<p>曇りノイズの模様は「ブラシ」の「Seed」で固定されます。Seed自体は詳細設定のキーフレームまたはカスタム軌跡で表示されます。</p>
+<p>曇り量を0%にしても、有効にした水滴は残ります。
+曇りの強い部分では水滴も見えにくくなるため、水滴を調整するときはいったん曇り量を下げると変化を確認しやすくなります。</p>
+      </section>
+
+      <section class="section" id="outside-droplets">
+        <p class="section-kicker">06 / GUIDE</p>
+        <h2>水滴と雨だれの設定</h2>
+<p><strong>表示条件：</strong>標準設定と詳細設定の両方で使えます。水滴のSeedも両方で使え、ブラシのSeedとは別の項目です。</p>
+<p>「外側の水滴量」を0%より大きくすると、水滴を表示できます。
+0%では、ほかの水滴設定が非表示になります。</p>
+<h3>水滴の動きを選ぶ</h3>
+<p>新しく追加したエフェクトの既定は「簡易物理」です。動きの選択項目がない古い保存データは「周期動作」として読み込み、保存済みの選択は維持します。
+周期動作は設定した待ち時間や周期に沿って水滴が落下します。簡易物理は水滴の大きさや滑りやすさに応じて動き、接触すると合体します。どちらも「水滴を垂らす」と「水滴の合体」のON/OFFに従います。
+大きくなった滴が滑り始める演出には「簡易物理」を選びます。切り替えても、ほかの設定値は変わりません。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead><tr><th>項目</th><th>初期値</th><th>使い方</th></tr></thead>
+<tbody>
+<tr><td>水滴の動き</td><td>簡易物理</td><td>周期動作／簡易物理を切り替えます。見た目の選択とは独立しています。</td></tr>
+<tr><td>滑りやすさ</td><td>100%</td><td>簡易物理だけで表示。25〜400%。高くすると小さい滴も滑り始めやすくなります。</td></tr>
+<tr><td>雨の補給</td><td>200%</td><td>簡易物理だけで表示。0〜400%。0%で追加の雨を止めます。</td></tr>
+</tbody></table></div>
+<p>簡易物理では、小さい滴はその場に留まり、大きい滴は画面下へ滑ります。
+「水滴の合体」がONなら接触した滴の水量を足し合わせるため、合体をきっかけに滑り始めることもあります。
+「水滴を垂らす」をOFFにしても、補給と接触合体は続きます。</p>
+<p>「外側の水滴量」は初期候補数に対応し、50%で128滴、100%で256滴です。合体などで実際に見える数は減ります。
+同時に存在する物理粒子は最大256滴で、上限では補給を見送ります。合体途中の表示は別に補間します。
+「垂れる速さ」は運動の時間倍率で、雨の出現時刻と補給間隔は変えません。
+「水筋の長さ」は簡易物理でも使えますが、長さには画面高さに応じた上限があります。</p>
+<p>簡易物理では「垂れる割合」「垂れる頻度」「面に合わせる」は表示しません。周期動作へ戻すと保存値を再利用します。
+四角形（四隅指定）を含む領域の内側へ切り抜けますが、水滴の形や重力は面の傾きに追従しません。三次元の流体計算ではありません。</p>
+<h3>水滴の見た目</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>新規追加時の値</th>
+<th>使い方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>外側の水滴量</td>
+<td>50%</td>
+<td>水滴の量を調整します。0%で非表示です。</td>
+</tr>
+<tr>
+<td>水滴サイズ</td>
+<td>100%</td>
+<td>水滴の大きさを変えます。</td>
+</tr>
+<tr>
+<td>水滴の濃さ</td>
+<td>100%</td>
+<td>水滴全体の輪郭や反射などの強さを変えます。</td>
+</tr>
+<tr>
+<td>Seed</td>
+<td>0</td>
+<td>配置や動きのパターンを変えます。</td>
+</tr>
+<tr>
+<td>水滴の見た目</td>
+<td>リアル（屈折）</td>
+<td>「白い輪郭」「黒い輪郭」「リアル（屈折）」を切り替えます。</td>
+</tr>
+<tr>
+<td>輪郭の濃さ</td>
+<td>30%</td>
+<td>黒い輪郭またはリアルで表示します。黒い縁と水筋の暗い縁を調整します。</td>
+</tr>
+<tr>
+<td>面に合わせる</td>
+<td>ON</td>
+<td>周期動作の白い輪郭／黒い輪郭で、四隅指定の面変形へ水滴を合わせます。リアルと簡易物理では非表示となり、保存値を維持します。</td>
+</tr>
+</tbody></table></div>
+<p>黒い輪郭は、透ける中心と暗い縁、上側の白い反射を持つ見た目です。
+輪郭の濃さを0%にすると黒い縁が消え、白い反射は残ります。
+反射も含めて薄くしたい場合は、水滴の濃さを下げます。</p>
+<p>リアル（屈折）は、水滴内に入力映像を上下左右反転して縮小し、歪めた像を描きます。
+水筋には輪郭と反射を描きます。背景の奥行きまで再現する物理シミュレーションではありません。</p>
+<p>新規追加時はリアルが選ばれています。屈折を確認するときは、水滴サイズを上げ、文字や模様のある背景でプレビューします。別の見た目を使っている場合は「リアル（屈折）」に切り替えます。
+四隅指定では水滴の面変形を行いません。周期動作の「白い輪郭」か「黒い輪郭」へ戻すと「面に合わせる」の保存値を再利用します。
+屈折像を含めて薄くするには「水滴の濃さ」を調整します。</p>
+<h3>周期動作の垂れる水滴と水筋</h3>
+<p>「水滴を垂らす」をONにすると、次の項目が表示されます。
+OFFにすると水滴は静止します。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>新規追加時の値</th>
+<th>使い方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>垂れる割合</td>
+<td>100%</td>
+<td>落下する水滴の比率。0%では落下しません。</td>
+</tr>
+<tr>
+<td>垂れる速さ</td>
+<td>100%</td>
+<td>落下速度。合体などによる変化を除く基準では、100%で領域の高さを約6秒で移動します。</td>
+</tr>
+<tr>
+<td>垂れる頻度</td>
+<td>200%</td>
+<td>100〜400%で落下滴の候補数を増やします。400%では候補数が最大4倍になります。</td>
+</tr>
+<tr>
+<td>水筋の長さ</td>
+<td>100%</td>
+<td>落下した滴の後ろへ残す筋の長さ。0%では筋を表示しません。</td>
+</tr>
+<tr>
+<td>水滴の合体</td>
+<td>ON</td>
+<td>接触する小さい滴を大きい滴へ吸収します。</td>
+</tr>
+</tbody></table></div>
+<p>滴を大きくしたり速くしたりせず、同じ時間内で垂れる数を増やしたい場合は「垂れる頻度」を上げます。
+発生はランダムで、毎秒一定の回数を指定する機能ではありません。
+水滴量、垂れる割合、合体によって実際に見える数は変わります。
+高い頻度では合体判定と描画の負荷が増えます。</p>
+<p>落下中の滴は上側が細い形へ変化し、水筋は滴の上端へつながります。
+合体すると落下滴が大きくなり、落下速度も変化します。
+初めから重なる静止滴や、落下滴同士も吸収の対象です。</p>
+<p>合体では一定の区間を繰り返して描画します。
+途中で吸収された静止滴は、区間の終わりに初期配置へ戻ることがあります。</p>
+<h3>雨の降り始め</h3>
+<p>「雨の降り始め」をONにすると、滴ごとの出現時刻をずらせます。
+滴ごとの初回出現時刻を、指定した期間内へ分散します。
+出現した滴は落下や合体で消えることもあるため、画面に見える数が増え続けるとは限りません。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>新規追加時の値</th>
+<th>使い方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>雨の降り始め</td>
+<td>ON</td>
+<td>OFFでは先頭から水滴を表示します。</td>
+</tr>
+<tr>
+<td>出現開始時間</td>
+<td>1秒</td>
+<td>アイテムの先頭から、水滴が現れ始めるまでの時間。</td>
+</tr>
+<tr>
+<td>出現期間</td>
+<td>10秒</td>
+<td>出現開始時間から、滴を出現させる時間幅。0秒なら一斉に出現します。</td>
+</tr>
+</tbody></table></div>
+<p>出現開始時間と出現期間は、雨の降り始めがONのときだけ表示します。
+小数の秒数で指定でき、範囲は0秒から36,000秒です。</p>
+<p>簡易物理では、これは初期滴が現れる時間の設定です。「出現期間」の終了後も「雨の補給」は続きます。
+補給を止めるには「雨の補給」を0%にします。「雨の降り始め」がONなら、補給も出現開始時間以降に始まります。</p>
+<p>まだ出現していない滴は、落下や合体を始めません。
+「水滴を垂らす」がOFFでも、静止した水滴が順に現れる演出を作れます。
+水滴の出現時間は、拭き取りの描画時間や垂れる速さと独立しています。</p>
+<p>同じバージョン、設定、Seed、再生位置では、同じ水滴の状態を再現する設計です。</p>
+      </section>
+
+      <section class="section" id="patterns">
+        <p class="section-kicker">07 / GUIDE</p>
+        <h2>拭き方と点のつなぎ方</h2>
+<p><strong>表示条件：</strong>標準設定、または詳細設定で軌跡の種類が「定型軌跡」の場合に表示されます。</p>
+<h3>5種類の拭き方</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>拭き方</th>
+<th>動き</th>
+<th>主に調整する項目</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一回拭き（直線）</td>
+<td>始点から終点へ一度だけ拭く</td>
+<td>始点、終点</td>
+</tr>
+<tr>
+<td>一回拭き（経由点あり）</td>
+<td>経由点を通って一度だけ拭く</td>
+<td>始点、経由点、終点、点のつなぎ方</td>
+</tr>
+<tr>
+<td>往復拭き（直線）</td>
+<td>直線を往復する</td>
+<td>始点、終点、往復回数、拭き取り量</td>
+</tr>
+<tr>
+<td>往復拭き（経由点あり）</td>
+<td>曲がった軌跡を往復する</td>
+<td>始点、経由点、終点、点のつなぎ方、往復回数、拭き取り量</td>
+</tr>
+<tr>
+<td>往復拭き（ずれ）</td>
+<td>往復ごとに位置をずらす</td>
+<td>始点、終点、点のつなぎ方、往復回数、拭き取り量、ずれX、ずれY。曲線または円弧では経由点も使用</td>
+</tr>
+</tbody></table></div>
+<p>始点などの位置は、効果をかける領域の中での百分率です。
+Xは右へ、Yは下へ行くほど値が大きくなります。</p>
+<p>選んだ拭き方で使う項目だけが表示されます。
+非表示になった値は保持されるため、元の拭き方へ戻すと再利用できます。</p>
+<p><a id="interpolation"></a></p>
+<h3>直線、曲線、円弧</h3>
+<p>「点のつなぎ方」は、経由点ありの2種類と「往復拭き（ずれ）」で選べます。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>選択肢</th>
+<th>形の決まり方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>直線</td>
+<td>点を直線でつなぎます。折れ曲がりを残したいときに使います。</td>
+</tr>
+<tr>
+<td>曲線（Catmull-Rom）</td>
+<td>制御点を滑らかにつなぎます。</td>
+</tr>
+<tr>
+<td>円弧（3点）</td>
+<td>始点、経由点、終点を通る円弧を作ります。経由点は円の中心ではなく、円弧が通る点です。</td>
+</tr>
+</tbody></table></div>
+<p>「一回拭き（直線）」と「往復拭き（直線）」は、常に直線で結びます。
+「往復拭き（ずれ）」で直線を選んだ場合、経由点は使いません。</p>
+<p>円弧にしたい場合は、経由点を始点と終点の直線から離します。
+3点が一直線に並ぶか、同じ位置に重なる場合は、曲線方式へ切り替えて処理します。</p>
+<p><a id="progressive"></a></p>
+<h3>往復で少しずつ拭く</h3>
+<p>往復回数は1.0回から5.0回まで、0.5回単位で指定できます。
+整数の回数では始点側へ戻って終わります。
+1.5回なら「始点→終点→始点→終点」と進み、終点側で拭き終わります。
+「往復拭き（ずれ）」では、最後の半往復も、それまでに完了した往復分だけずれた終点へ進みます。
+「拭き取り量」は、往復する3種類の拭き方で使います。
+<a href="#wipe-controls">拭き取り強度や拭き残しとの違い</a>も確認できます。</p>
+<p>拭き取り量は片道ごとに、残っている曇りの何%を取り除くかを指定します。
+100%なら最初の通過で拭き取り、0%なら拭き取りません。</p>
+<p>たとえば40%にすると、同じ場所を通った回数に応じて、曇りを取り除く割合は1回で40%、2回で64%、3回で約78%になります。
+初期値は100%なので、少しずつ見せたいときは20%から50%程度へ下げて調整します。</p>
+<p>「往復拭き（ずれ）」では、ずれXとずれYをそれぞれ-20%から20%の範囲で指定できます。
+Xの正の値は右、Yの正の値は下へずらします。
+軌跡が領域の端を越えた部分は表示されません。</p>
+      </section>
+
+      <section class="section" id="timing">
+        <p class="section-kicker">08 / GUIDE</p>
+        <h2>拭き取りの開始時間と進み方</h2>
+<p><strong>表示条件：</strong>時間指定方式と開始／完了は両方の設定方法で使えます。「進行度」は標準設定または詳細設定の定型軌跡で表示されます。</p>
+<h3>描き始めと描き終わり</h3>
+<p>「時間指定方式」で、使いたい単位を選びます。
+選択した方式の開始値と完了値だけが描画に使われます。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>時間指定方式</th>
+<th>画面の項目</th>
+<th>指定する位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>パーセンテージ</td>
+<td>描画開始位置 / 描画完了位置</td>
+<td>アイテム全体に対する割合</td>
+</tr>
+<tr>
+<td>固定フレーム</td>
+<td>描画開始フレーム / 描画完了フレーム</td>
+<td>アイテムの先頭を0とするフレーム数</td>
+</tr>
+<tr>
+<td>秒数</td>
+<td>描画開始秒 / 描画完了秒</td>
+<td>アイテムの先頭からの秒数</td>
+</tr>
+</tbody></table></div>
+<p>パーセンテージは、アイテムの長さを変えると描画にかかる時間も変わります。
+秒数で開始1秒、完了3秒とすれば、描画する区間は2秒です。
+完成状態を長く見せるには、描画完了より後までアイテムを延ばします。</p>
+<p>固定フレームまたは秒数の完了値がアイテム終端より後にあると、途中まで拭いた状態で終わります。
+完了値を開始値以下にすると、開始位置で完成状態へ切り替わります。</p>
+<h3>進行度で加減速する</h3>
+<p>ここからは、時間とともに値を変えるYMM4のアニメーション（Animation）を使う応用操作です。</p>
+<p>標準設定の「進行度」は、軌跡全体のどこまで拭くかを指定します。
+初期値は0%から100%への直線移動です。
+YMM4のAnimation設定で加減速を変更すると、軌跡の形を保ちながら進み方を変えられます。</p>
+<p>往復する場合は、設定した全往復を進行度0%から100%へ割り当てます。
+進行度50%が何回目の折り返しになるかは、往復回数によって変わります。</p>
+<h3>中間点を使う場合</h3>
+<p>YMM4で拭き取り用のAnimationに中間点を追加すると、アイテム全体に対する中間点の位置を、描画開始から完了までの区間へ対応させます。
+たとえばアイテム中央の中間点は、描画開始0.5秒、完了3秒なら、拭き取りの1.75秒の位置に対応します。
+進行度とブラシの寸法や回転が対象です。詳細設定のキーフレームでは軌跡のX、Y、接触率も、キーフレームとカスタム軌跡では拭き取り強度も対象になります。
+曇り量など映像全体のAnimationは、アイテム上の時刻どおりに変化します。</p>
+      </section>
+
+      <section class="section" id="brush">
+        <p class="section-kicker">09 / GUIDE</p>
+        <h2>ブラシの形と大きさ</h2>
+<p><strong>表示条件：</strong>この章の形状、寸法、回転角、回転追従は両方の設定方法で使えます。表示される寸法はブラシ形状によって変わります。</p>
+<p>「ブラシ」の「形状」は、標準設定でも詳細設定でも選べます。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>形状</th>
+<th>用途と調整</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>円</td>
+<td>丸い拭き跡。直径をピクセル単位で指定します。</td>
+</tr>
+<tr>
+<td>楕円</td>
+<td>楕円の拭き跡。幅と高さを別々にピクセル単位で指定します。</td>
+</tr>
+<tr>
+<td>四角形</td>
+<td>四角い面で拭く形。幅と高さを別々にピクセル単位で指定します。</td>
+</tr>
+<tr>
+<td>手形</td>
+<td>指のある形。「サイズ倍率」「左右反転」と「連続拭き」を使えます。</td>
+</tr>
+<tr>
+<td>靴跡</td>
+<td>靴底の形。「サイズ倍率」「左右反転」と「連続拭き」を使えます。</td>
+</tr>
+<tr>
+<td>ユーザー画像</td>
+<td>登録したPNGの透過情報をブラシに使います。「サイズ倍率」「左右反転」「連続拭き」を使えます。</td>
+</tr>
+</tbody></table></div>
+<h3>大きさ、幅、向き</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>調整する内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>直径</td>
+<td>円で使用。入力素材上の直径を0pxから8192pxで指定します。</td>
+</tr>
+<tr>
+<td>幅・高さ</td>
+<td>楕円と四角形で使用。入力素材上の寸法をそれぞれ0pxから8192pxで指定します。</td>
+</tr>
+<tr>
+<td>サイズ倍率</td>
+<td>手形、靴跡、ユーザー画像で使用。PNG元キャンバスの幅・高さへ同じ倍率を掛けます。25%から400%で指定し、100%は元キャンバスと同じ大きさです。</td>
+</tr>
+<tr>
+<td>回転角</td>
+<td>ブラシの向きを調整します。手形の指先と靴跡の爪先は0°で上向きです。</td>
+</tr>
+<tr>
+<td>回転追従</td>
+<td>移動方向に合わせてブラシが向きを変える割合です。回転角は追従した向きにも加算されます。</td>
+</tr>
+<tr>
+<td>左右反転</td>
+<td>手形、靴跡、ユーザー画像を左右に反転します。</td>
+</tr>
+</tbody></table></div>
+<p>寸法値は標準設定と詳細設定で共通です。</p>
+<h3>ピクセル寸法の入力例</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>作りたい形</th>
+<th>形状と設定値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>直径10pxの円</td>
+<td>「円」を選び、直径を10pxにします。</td>
+</tr>
+<tr>
+<td>直径140pxの円</td>
+<td>「円」を選び、直径を140pxにします。</td>
+</tr>
+<tr>
+<td>幅25px、高さ50pxの楕円</td>
+<td>「楕円」を選び、幅を25px、高さを50pxにします。</td>
+</tr>
+<tr>
+<td>幅100px、高さ30pxの四角形</td>
+<td>「四角形」を選び、幅を100px、高さを30pxにします。</td>
+</tr>
+</tbody></table></div>
+<p>直径、幅、高さはYMM4のAnimationに対応します。
+入力欄は整数表示ですが、キーフレーム間では小数値も補間されます。
+円は直径0px、楕円と四角形はいずれかの寸法が0pxになると描画しません。</p>
+<p>ここでいうピクセルは、エフェクトへ入力される画像上の寸法です。
+YMM4側でアイテムを拡大縮小、回転、四隅指定すると、ブラシも入力画像と一緒に変形されるため、プレビュー上の見かけの寸法は変わります。</p>
+<p>手形、靴跡、ユーザー画像はPNG全体の元キャンバス寸法を使います。
+透明な余白も基準寸法に含み、「サイズ倍率」を幅・高さへ等率で適用します。
+円、楕円、四角形では「サイズ倍率」は表示せず、ピクセル寸法を指定します。</p>
+<p>手形と靴跡は、往復の折り返しで上下が反転しないように向きを維持します。
+四角形も折り返し前の向きを保ち、復路では往路と同じ向きを基準に回転追従を適用します。
+回転追従を100%未満にした場合も、この基準で向きを調整します。</p>
+      </section>
+
+      <section class="section" id="continuous-wipe">
+        <p class="section-kicker">10 / GUIDE</p>
+        <h2>手形・靴跡・ユーザー画像をつなげて拭く</h2>
+<p><strong>表示条件：</strong>標準設定と詳細設定の両方で、ブラシ形状が手形、靴跡またはユーザー画像の場合に表示されます。</p>
+<p>新しく追加したエフェクトでは、手形・靴跡・ユーザー画像の<strong>連続拭き</strong>が最初からONです。
+移動に沿ってブラシ形状がつながります。
+回転やサイズの変化も補間するため、スタンプを並べたときの隙間を減らせます。
+始点と終点にはブラシの形が残ります。</p>
+<blockquote class="callout">
+<p><strong>拭く回数や往復動作は変わりません。</strong></p>
+<p>「連続拭き」は、拭く回数や往復動作を変えません。
+「一回拭き」では、一度だけ拭きます。
+繰り返し拭く場合は、「拭き方」で往復するパターンを選び、「往復回数」を設定します。</p>
+</blockquote>
+<ol>
+<li>「ブラシ」の形状を手形、靴跡またはユーザー画像へ切り替えます。</li>
+<li>「連続拭き」がONの状態で軌跡をプレビューします。</li>
+<li>回転追従を調整します。</li>
+</ol>
+<p>スタンプ状の跡を残したい場合は、連続拭きをOFFにします。
+手形・靴跡・ユーザー画像へ切り替えた場合もONになりますが、同じ形状を再指定しただけなら、手動でOFFにした値を保持します。
+プロジェクトの読み込み、複製、プリセット適用、Undo／Redoでは保存されているON／OFFを維持します。</p>
+<p>詳細設定で接触率を0%にした区間や、別々のストロークの間はつながりません。
+連続拭きは手形・靴跡・ユーザー画像の設定です。</p>
+      </section>
+
+      <section class="section" id="region">
+        <p class="section-kicker">11 / GUIDE</p>
+        <h2>効果をかける範囲</h2>
+<p><strong>表示条件：</strong>標準設定と詳細設定の両方で使えます。四隅指定のプリセットも詳細設定専用ではありません。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>領域の形状</th>
+<th>設定する内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>入力領域全体</td>
+<td>エフェクトへ渡された映像全体にかけます。</td>
+</tr>
+<tr>
+<td>四角形</td>
+<td>中心X、中心Y、幅、高さ、回転角を調整します。</td>
+</tr>
+<tr>
+<td>円または楕円</td>
+<td>中心X、中心Y、幅、高さ、回転角を調整します。</td>
+</tr>
+<tr>
+<td>四角形（四隅指定）</td>
+<td>台形の窓などに合わせ、左上、右上、右下、左下を指定します。</td>
+</tr>
+</tbody></table></div>
+<p>「境界ぼかし」を増やすと、領域の縁がなだらかになります。
+領域内の拭き跡は、現在の領域の位置や形に合わせて表示されます。</p>
+<p>四隅を直接調整する場合は、領域の形状を「四角形（四隅指定）」にし、四隅指定側のプリセットを「カスタム」にします。
+各頂点は入力画像に対する座標で、-100%から200%まで指定できます。
+負の値や100%を超える値を使えば、画面外まで続く窓にも合わせられます。
+四辺が交差するなど不正な形になると、効果が消えて入力映像をそのまま表示します。</p>
+<p>四隅指定で水滴も面の遠近に合わせたい場合は、水滴の動きを「周期動作」、見た目を「白い輪郭」か「黒い輪郭」にして、「面に合わせる」をONにします。
+「リアル（屈折）」は水滴の形を画面上で保ち、四隅の領域で切り抜きます。面の遠近に沿った水滴の変形には対応しません。
+OFFにすると、水滴の丸みと画面下方向への落下を優先して、領域内に表示します。</p>
+      </section>
+
+      <section class="section" id="detailed">
+        <p class="section-kicker">12 / GUIDE</p>
+        <h2>詳細設定で軌跡を作る</h2>
+<p><strong>表示条件：</strong>この章は詳細設定のみです。X、Y、接触率はキーフレーム、制御点編集はカスタム軌跡で表示されます。</p>
+<p>「設定方法」を「詳細設定」にすると、「軌跡の種類」を選べます。
+新規エフェクトを標準設定から切り替えた直後は「定型軌跡」で、標準設定と同じ軌跡設定を表示します。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>軌跡の種類</th>
+<th>作り方</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定型軌跡</td>
+<td>標準設定で決めた拭き方と軌跡設定を使います。</td>
+</tr>
+<tr>
+<td>キーフレーム</td>
+<td>「軌跡」グループのX、Y、接触率などをYMM4のAnimationで動かします。</td>
+</tr>
+<tr>
+<td>カスタム軌跡</td>
+<td>複数のストロークと制御点を編集します。</td>
+</tr>
+</tbody></table></div>
+<p><strong>ストローク</strong>は、ブラシを離さずに描く一続きの軌跡です。
+別々のストロークの間には線を引きません。
+キーフレームでは、接触率を0%にした区間をブラシを持ち上げた状態として扱います。</p>
+<h3>ハートなどの軌跡を使う</h3>
+<p>内蔵の「ハート」「相合い傘」「スマイル」は、軌跡のプリセットです。
+適用後も制御点を編集できます。</p>
+<ol>
+<li>「設定方法」を「詳細設定」にします。</li>
+<li>プリセットの「種類」を「軌跡」にします。</li>
+<li>内蔵の図柄を選び、「適用」を押します。</li>
+<li>確認画面で「はい」を選びます。</li>
+<li>展開されたカスタム軌跡を調整します。</li>
+</ol>
+<p>現在のブラシ設定は保持されます。
+ゼロから軌跡を作る場合は、種類を「軌跡」にして「空から作成」を押します。
+残したい軌跡がある場合は、先にユーザープリセットへ登録してください。</p>
+<h3>カスタム軌跡の制御点を編集する</h3>
+<ol>
+<li>「軌跡の種類」を「カスタム軌跡」にし、内蔵プリセットまたは「空から作成」で編集する軌跡を用意します。</li>
+<li>一続きの軌跡を増やす場合は「ストロークを追加」、同じ軌跡の点を増やす場合は「制御点を追加」を押します。</li>
+<li>各制御点の「時刻%」「X px」「Y px」「接触%」を入力し、別の欄へフォーカスを移して確定します。</li>
+<li>「上へ」「下へ」で並びを変え、「削除」で不要なストロークや制御点を取り除きます。</li>
+</ol>
+<p>「時刻%」は描画開始を0%、描画完了を100%とする位置です。
+「接触%」を0%にした区間は拭きません。
+最大64ストローク、各ストローク512点まで編集できます。</p>
+<h3>拭き跡を細かく調整する（詳細設定のみ）</h3>
+<p>次の表はすべて「詳細設定」で軌跡の種類が「キーフレーム」または「カスタム軌跡」の場合だけ表示される項目です。定型軌跡では表示されません。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>調整する内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>軌跡平滑化</td>
+<td>軌跡の角を滑らかにします。0%では元の形を維持します。</td>
+</tr>
+<tr>
+<td>微小揺れ</td>
+<td>軌跡へ小さな揺れを加えます。</td>
+</tr>
+<tr>
+<td>柔らかさ</td>
+<td>ブラシの中心から外周へ向かって拭き取りを弱めます。</td>
+</tr>
+<tr>
+<td>拭き残し</td>
+<td>拭いた後に残る曇りを調整します。</td>
+</tr>
+<tr>
+<td>拭きムラ</td>
+<td>拭き跡の不均一さを調整します。</td>
+</tr>
+<tr>
+<td>Seed</td>
+<td>微小揺れ、拭きムラ、曇りノイズのパターンを変えます。水滴のSeedとは別の設定です。</td>
+</tr>
+<tr>
+<td>拭き取り強度</td>
+<td>ブラシによる拭き取りの強さを調整します。</td>
+</tr>
+</tbody></table></div>
+<p>詳細設定で変更した「拭き残し」「拭きムラ」は、標準設定や定型軌跡へ切り替えて非表示になっても値が保持され、曇りの見た目に反映されます。
+変更するには、詳細設定でキーフレームまたはカスタム軌跡を選び直します。</p>
+<p>曇りノイズは標準設定でも調整できます。<a href="#fog-noise">曇りノイズの説明</a>を参照してください。</p>
+<h3 id="wipe-controls">拭き取り量、拭き取り強度、拭き残しの違い</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead><tr><th>項目</th><th>調整できる軌跡</th><th>効果</th></tr></thead>
+<tbody>
+<tr><td>拭き取り量</td><td>標準設定または定型軌跡の往復パターン</td><td>片道の通過ごとに、残っている曇りから取り除く割合です。Animationには対応しません。</td></tr>
+<tr><td>拭き取り強度</td><td>詳細設定のみ：キーフレーム、カスタム軌跡</td><td>ブラシによる拭き取りの強さです。Animationで変化させられます。</td></tr>
+<tr><td>拭き残し</td><td>詳細設定のみ：キーフレーム、カスタム軌跡</td><td>ブラシが通過した範囲に残す曇りの割合です。変更した値は標準設定や定型軌跡でも反映されます。</td></tr>
+</tbody></table></div>
+<h3>座標と領域の関係</h3>
+<p>カスタム軌跡のXとYは、1920×1080の基準キャンバス上の整数ピクセルで指定します。
+時刻と接触率はパーセント指定のままです。
+実際の領域には縦横比を保って収め、余る方向を中央へ寄せるため、ハート、相合い傘、スマイルなどの図柄が領域の縦横比で歪みません。
+基準キャンバスの左上はX 0px、Y 0px、右下はX 1920px、Y 1080pxです。
+領域が16:9でない場合は、余る方向の両側に同じ幅の余白を置くため、軌跡が領域の端まで届かない場合があります。
+同じ相対範囲を指定した3840×2160の入力では、1920×1080の入力に対して軌跡も2倍の大きさになります。</p>
+      </section>
+
+      <section class="section" id="user-brush">
+        <p class="section-kicker">13 / GUIDE</p>
+        <h2>PNG画像をブラシにする</h2>
+<p><strong>表示条件：</strong>標準設定と詳細設定の両方で、ブラシ形状が「ユーザー画像」の場合に登録や選択の欄を表示します。</p>
+<ol>
+<li>「ブラシ」の形状を「ユーザー画像」にします。</li>
+<li>「登録名」に、一覧に表示する名前（例：テスト用ブラシ）を入力します。PNGのファイル名やパスを入力する欄ではありません。空欄のままではファイル選択画面を開けません。</li>
+<li>「PNGを追加」を押し、ファイル選択画面でフォルダーを開いてPNGを選び、「開く」を押します。同名の登録がある場合は、先に置換の確認画面が出ます。</li>
+<li>登録した画像が、そのエフェクトへ適用されます。登録済みの別の画像を使うときは、一覧から選んで「使用」を押します。</li>
+</ol>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>条件</th>
+<th>登録できる範囲</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>形式</td>
+<td>アルファチャンネルを持つPNG</td>
+</tr>
+<tr>
+<td>大きさ</td>
+<td>幅と高さがそれぞれ1920px以下</td>
+</tr>
+<tr>
+<td>ファイルサイズ</td>
+<td>8MiB以下</td>
+</tr>
+<tr>
+<td>登録数</td>
+<td>最大100件</td>
+</tr>
+</tbody></table></div>
+<p>PNGの透過情報を拭き取り形状として使います。
+全画素が不透明でもアルファチャンネルがあれば登録できますが、その場合は画像全体の四角い範囲がブラシになります。
+透明な余白を切り取らず、登録したPNGの元キャンバス全体を寸法として使います。
+SVGと、アルファチャンネルのないPNGは登録できません。
+「手形」と「靴跡」は内蔵ブラシの名前なので、登録名には使えません。</p>
+<p>画像はプラグインの管理フォルダーへコピーされます。
+登録後に元のPNGを移動しても使えます。
+「置換」は登録した項目を保ちながら画像を更新し、「削除」は確認後に登録情報と管理画像を削除します。
+画像の見かけの大きさだけを変える場合は、「サイズ倍率」を調整します。
+PNG自体の絵柄やキャンバス寸法を変える場合は「置換」を使います。
+操作中のエフェクトには置換した画像が適用されます。
+同じ画像を使う別のエフェクトでは、一覧から画像を選び「使用」を押して参照を更新してください。
+その画像を使うプリセットも、参照を更新した設定で再登録します。</p>
+<p>登録画像が欠落または破損した場合や、画像の置換後にエフェクト側の参照が古い場合は、入力映像をそのまま表示します。
+一覧に項目が残っている場合は、その項目を「置換」して画像を復旧できます。
+一覧から作り直した場合は、使うエフェクトでも新しいブラシを選び直してください。</p>
+      </section>
+
+      <section class="section" id="presets">
+        <p class="section-kicker">14 / GUIDE</p>
+        <h2>よく使う設定をプリセットに保存する</h2>
+<p><strong>表示条件：</strong>詳細設定のみです。「軌跡」グループのプリセット欄を使います。領域の四隅指定にあるプリセットとは別です。</p>
+<p>ユーザープリセットは「軌跡」「ブラシ」「全設定」の3種類です。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>種類</th>
+<th>保存する内容</th>
+<th>適用後も保つ内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>軌跡</td>
+<td>カスタム軌跡、軌跡平滑化、微小揺れ、そのSeed</td>
+<td>現在のブラシと水滴設定</td>
+</tr>
+<tr>
+<td>ブラシ</td>
+<td>形状、生成形状の直径・幅・高さ、サイズ倍率、ユーザー画像の選択、左右反転、連続拭き、回転、拭き取りの強さ、回転追従、柔らかさ、拭き残し、拭きムラ、描画品質</td>
+<td>現在の軌跡、軌跡の種類、軌跡平滑化、微小揺れ、そのSeed、水滴設定</td>
+</tr>
+<tr>
+<td>全設定</td>
+<td>上の軌跡とブラシに加え、水滴設定</td>
+<td>曇り、領域、描画時間など、プリセットに含まれない設定</td>
+</tr>
+</tbody></table></div>
+<p>「全設定」にも、曇り量、ぼかし量、曇り色、領域、描画開始と完了は含まれません。
+エフェクト全体の状態を残す場合は、YMM4のプロジェクトとして保存します。</p>
+<h3>保存したプリセットを呼び出す</h3>
+<ol><li>「設定方法」を「詳細設定」にし、プリセットの「種類」を選びます。</li><li>一覧から「ユーザー: 名前」を選び、「適用」を押します。</li><li>確認画面で内容を確認し、「はい」を選んでプレビューします。</li></ol>
+<p>「軌跡」と「全設定」の適用ではカスタム軌跡へ切り替わります。「全設定」にも曇りや領域、描画時間は含まれません。</p>
+<h3>登録する</h3>
+<p>定型軌跡でもプリセット欄は表示され、ブラシの登録と適用に使えます。
+定型軌跡のままでは「軌跡」と「全設定」は登録できません。
+「軌跡」または「全設定」を適用すると、軌跡の種類は「カスタム軌跡」に切り替わります。
+同じ注意はプリセット欄のツールチップでも確認できます。</p>
+<ol>
+<li>「設定方法」を「詳細設定」にし、プリセットの「種類」を選びます。</li>
+<li>「軌跡」または「全設定」では、軌跡の種類を「カスタム軌跡」にして内容を整えます。「ブラシ」は、どの軌跡の種類でも登録できます。</li>
+<li>名前を入力します。名前は1文字から64文字です。</li>
+<li>「現在の設定を登録」を押します。</li>
+<li>同じ種類に同じ名前がある場合は、確認して上書きします。</li>
+</ol>
+<p>3種類の合計で最大100件保存できます。
+登録後は「ユーザー: 名前」と表示されます。
+適用時には、その種類に含まれる値だけを変更します。
+保存ファイルが破損している場合は、元ファイルを自動上書きせず、エラーを表示します。</p>
+      </section>
+
+      <section class="section" id="save">
+        <p class="section-kicker">15 / GUIDE</p>
+        <h2>保存、バックアップ、別のPCへの移行</h2>
+<h3>プロジェクトと登録データの違い</h3>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>保存するもの</th>
+<th>保存先</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>アイテムのエフェクト設定</td>
+<td>YMM4のプロジェクト</td>
+</tr>
+<tr>
+<td>ユーザープリセットの一覧</td>
+<td>YMM4の設定フォルダー内の<code>YMM4GlassWipe\presets.json</code></td>
+</tr>
+<tr>
+<td>ユーザーブラシの一覧と画像</td>
+<td>YMM4の設定フォルダー内の<code>YMM4GlassWipe\brushes</code></td>
+</tr>
+</tbody></table></div>
+<p>ユーザーブラシのPNGは、YMM4のプロジェクトには埋め込まれません。
+プロジェクトだけを別のPCへ移しても、登録画像は移りません。</p>
+<h3>ユーザーブラシも移す場合</h3>
+<p><strong>同じ名前で登録し直すだけでは、元のプロジェクトの参照は復旧しません。</strong>
+名前とは別の識別情報でブラシを参照しているためです。</p>
+<p>既存の参照を保って移す場合は、両方のPCでYMM4を終了し、<code>YMM4GlassWipe\brushes</code>フォルダー全体をバックアップして移します。
+<code>brushes.json</code>と、その中の<code>images</code>フォルダーを一緒に保持してください。
+移行先に既存の登録がある場合は先に退避し、一覧ファイルを安易に上書きしないでください。</p>
+<p>フォルダーを移せない場合や、移行先の登録と共存させたい場合は、PNGを移行先で登録し、各エフェクトで新しいブラシを選び直します。
+その画像を使うプリセットも、選び直した設定で再登録します。
+ユーザープリセットの一覧を移す場合は、<code>presets.json</code>も別途バックアップします。</p>
+      </section>
+
+      <section class="section" id="trouble">
+        <p class="section-kicker">16 / GUIDE</p>
+        <h2>困ったとき</h2>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>症状</th>
+<th>確認すること</th>
+</tr>
+</thead>
+<tbody><tr><td>初期状態が説明と異なる</td><td>保存済み設定やYMM4側のデフォルト変更では値が異なります。<a href="#defaults">初期値一覧</a>と比較します。</td></tr>
+<tr><td>曇り設定が見えない</td><td>曇り量が固定0%では、ぼかし量などを表示しません。曇りノイズも<a href="#fog-noise">曇り量が有効な場合</a>に表示します。</td></tr>
+<tr><td>動作が重い</td><td>同じ素材と再生位置で、水滴量や描画品質を下げて比較します。<a href="#quality">描画品質</a>を参照してください。</td></tr>
+<tr>
+<td>エフェクト名が見つからない</td>
+<td>YMM4を再起動し、「描画」を確認します。</td>
+</tr>
+<tr>
+<td>曇りが見えない</td>
+<td>曇り量、領域、デバッグ表示を確認します。すでに拭き終わった再生位置なら先頭へ戻します。</td>
+</tr>
+<tr>
+<td>拭き取りが始まらない</td>
+<td>選択中の時間指定方式と開始値、再生位置、進行度を確認します。往復では拭き取り量、キーフレームでは接触率も確認します。</td>
+</tr>
+<tr>
+<td>一瞬で拭き終わる</td>
+<td>描画完了が開始以下になっていないかを確認します。パーセンテージではアイテムの長さも確認します。</td>
+</tr>
+<tr>
+<td>手形・靴跡・ユーザー画像がスタンプのように残る</td>
+<td>「連続拭き」がOFFになっていないか確認します。別の形状から手形、靴跡またはユーザー画像へ変更するとONになります。同じ形状の再指定ではOFFを維持します。</td>
+</tr>
+<tr>
+<td>円弧にならない</td>
+<td>経由点を使う拭き方と「円弧（3点）」を選び、3点を一直線や同じ位置に置かないようにします。</td>
+</tr>
+<tr>
+<td>往復しても曇りが減らない</td>
+<td>拭き取り量を確認します。0%では拭き取らず、100%では最初に通った時点で拭き取ります。</td>
+</tr>
+<tr>
+<td>ずれが効かない</td>
+<td>拭き方を「往復拭き（ずれ）」にします。</td>
+</tr>
+<tr>
+<td>水滴が見えない</td>
+<td>外側の水滴量と水滴の濃さを確認します。雨の降り始めがONなら、出現開始時間と出現期間を足した時間より後まで再生します。曇りが強すぎる場合も見えにくくなります。</td>
+</tr>
+<tr>
+<td>水滴が垂れない</td>
+<td>水滴を垂らすをONにし、垂れる割合が0%でないことを確認します。出現直後には待機時間があるため、再生を続けて確認します。</td>
+</tr>
+<tr>
+<td>拭いても水滴が残る</td>
+<td>外側の水滴は拭き取りの対象外です。水滴自体を表示しない場合は、外側の水滴量を0%にします。</td>
+</tr>
+<tr>
+<td>輪郭の濃さや水滴の出現時間が表示されない</td>
+<td>輪郭の濃さは黒い輪郭かリアルのとき、水滴の出現時間は雨の降り始めがONのときに表示します。水滴量0%では両方とも非表示です。</td>
+</tr>
+<tr>
+<td>「面に合わせる」が表示されない</td>
+<td>リアルと簡易物理は領域内へ切り抜けますが、水滴の面変形には対応しません。動きを周期動作、見た目を白い輪郭／黒い輪郭にすると再表示します。</td>
+</tr>
+<tr><td>簡易物理で雨を増やしても滴が増えない</td><td>同時256滴が上限です。合体や流出でも数が減ります。補給量は表示数の保証ではありません。</td></tr>
+<tr>
+<td>簡易物理の小さい滴が落ちない</td><td>滑り始める大きさに達していない場合があります。水滴サイズや滑りやすさを上げるか、接触合体を使います。</td>
+</tr>
+<tr>
+<td>ブラシの寸法項目が見えない</td>
+<td>直径は円、幅・高さは楕円または四角形で表示します。手形、靴跡、ユーザー画像では「サイズ倍率」を表示します。連続拭きもこの3形状で表示します。</td>
+</tr>
+<tr>
+<td>ユーザー画像を使うと効果が消える</td>
+<td>ブラシ一覧のエラーを確認します。画像の置換後は一覧から選んで「使用」を押します。欠落または破損した場合は、置換または登録し直して再選択します。</td>
+</tr>
+<tr>
+<td>現在の設定を登録できない</td>
+<td>軌跡または全設定の登録では、正しいカスタム軌跡が必要です。ブラシだけを保存する場合は種類をブラシにします。</td>
+</tr>
+<tr>
+<td>プリセットの全設定を適用しても曇りが変わらない</td>
+<td>全設定プリセットにも曇り、領域、描画時間は含まれません。</td>
+</tr>
+<tr>
+<td>四隅指定で効果が消える</td>
+<td>四辺が交差していないか、頂点が重なっていないかを確認します。</td>
+</tr>
+<tr>
+<td>白黒の画像になる</td>
+<td>詳細設定のデバッグ表示を「最終結果」にします。</td>
+</tr>
+</tbody></table></div>
+<h3>対応していない機能</h3>
+<p>現在、次の機能には対応していません。</p>
+<ul>
+<li>水滴の物理的な背景屈折、分裂、曲面ガラスの物理変形、自動追跡</li>
+<li>外側の水滴をブラシで拭き取る機能</li>
+<li>空間を降る雨そのものの描画（降雨）</li>
+<li>EXO出力への本エフェクトの変換</li>
+<li>ユーザーブラシ画像のプロジェクトへの埋め込み</li>
+</ul>
+<p>現在の「雨の降り始め」は、ガラス面の水滴が時間差で現れる機能です。
+空間を降る雨を描く機能ではありません。</p>
+      </section>
+
+      <section class="section" id="quality">
+        <p class="section-kicker">17 / GUIDE</p>
+        <h2>描画品質と表示の確認</h2>
+<p><strong>表示条件：</strong>標準設定と詳細設定の両方で使えます。「自動」は標準設定または詳細設定の定型軌跡で選べます。</p>
+<p>「描画品質」は、軌跡をつなぐブラシの配置密度を調整します。
+手形・靴跡・ユーザー画像の連続拭きがONの場合は、移動、回転、大きさの変化を補間する細かさも変わります。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>選択肢</th>
+<th>動作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>軽量</td>
+<td>ブラシの間隔を広げ、負荷を抑えます。</td>
+</tr>
+<tr>
+<td>標準</td>
+<td>標準の間隔で描画します。</td>
+</tr>
+<tr>
+<td>高品質</td>
+<td>ブラシを密に配置します。</td>
+</tr>
+<tr>
+<td>自動</td>
+<td>定型軌跡で使用可能。一回拭きでは標準、往復では高品質を使います。</td>
+</tr>
+</tbody></table></div>
+<p>定型軌跡用の描画品質と、キーフレームやカスタム軌跡用の描画品質は別に保持します。
+大きなブラシや強い拭き取りでは、品質を変えても見た目の差が小さいことがあります。
+動作が重い場合は、描画品質や水滴量、水筋の長さを下げてプレビューを比較します。</p>
+      </section>
+
+      <section class="section" id="debug-view">
+        <p class="section-kicker">18 / GUIDE</p>
+        <h2>デバッグ表示を使う</h2>
+<p><strong>表示条件：</strong>詳細設定のみです。軌跡の種類にかかわらず表示されます。</p>
+<p>詳細設定の「デバッグ」にある「表示」は、領域や拭き跡が意図した状態になっているかを確認するための機能です。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>表示</th>
+<th>確認できること</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>最終結果</td>
+<td>曇り、拭き取り、水滴を合成した通常の映像を表示します。</td>
+</tr>
+<tr>
+<td>領域マスク</td>
+<td>曇りを適用する範囲を、領域内は白、領域外は黒、境界は灰色で表示します。</td>
+</tr>
+<tr>
+<td>拭き取りマスク</td>
+<td>現在までの拭き取り量を、強く拭いた場所は白、拭いていない場所は黒、中間は灰色で表示します。</td>
+</tr>
+<tr>
+<td>ぼかし</td>
+<td>ぼかしを適用した後のカラー映像を表示します。</td>
+</tr>
+<tr>
+<td>領域ローカルUV</td>
+<td>領域内の横位置と縦位置を色で表示し、領域の位置、回転、変形を確認できます。</td>
+</tr>
+<tr>
+<td>四角形（四隅指定）の妥当性</td>
+<td>四角形が有効な場合は緑、不正な場合は赤で表示します。</td>
+</tr>
+</tbody></table></div>
+<p>通常の映像へ戻すには、表示を「最終結果」にします。</p>
+      </section>
+
+      <section class="section" id="defaults">
+        <p class="section-kicker">19 / GUIDE</p>
+        <h2>初期値一覧</h2>
+<p>YMM4側で本エフェクトのデフォルトを変更していない場合、新しく追加すると、「標準設定」で曇り、水滴、手形による拭き取りが有効になっています。
+各項目の初期値と役割は、次の表で確認できます。水滴の動きは「簡易物理」、見た目は「リアル（屈折）」です。</p>
+<h3>主な初期値</h3>
+<p>保存したプロジェクトやテンプレートを読み込む場合は、その保存値が優先されます。初期値の更新によって、配置済みのエフェクトの値が自動で変わることはありません。</p>
+<p class="table-hint">表は横にスクロールできます。</p><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>項目</th>
+<th>初期値</th>
+<th>項目の解説</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>設定方法</td>
+<td>標準設定</td>
+<td>よく使う設定をまとめた標準設定と、個別に調整できる詳細設定を切り替えます。</td>
+</tr>
+<tr>
+<td>拭き方 / 点のつなぎ方</td>
+<td>往復拭き（ずれ） / 円弧（3点）</td>
+<td>拭き取りの動きと、始点、経由点、終点を結ぶ軌跡の形を選びます。</td>
+</tr>
+<tr>
+<td>始点 / 経由点 / 終点</td>
+<td>（X 15%, Y 50%） / （X 50%, Y 30%） / （X 75%, Y 30%）</td>
+<td>拭き取り軌跡の開始位置、曲線を通る位置、終了位置を指定します。</td>
+</tr>
+<tr>
+<td>往復回数 / 拭き取り量</td>
+<td>3.5回 / 100%</td>
+<td>軌跡を往復する回数と、片道ごとに取り除く曇りの割合を調整します。</td>
+</tr>
+<tr>
+<td>ずれX / ずれY</td>
+<td>3% / 10%</td>
+<td>往復するたびに軌跡を横方向、縦方向へ移動させます。</td>
+</tr>
+<tr>
+<td>時間指定方式</td>
+<td>秒数</td>
+<td>軌跡を描き始める時刻と描き終える時刻の指定方法を選びます。</td>
+</tr>
+<tr>
+<td>描画開始秒 / 描画完了秒</td>
+<td>0.5秒 / 3秒</td>
+<td>アイテムの先頭を0秒として、拭き取りを始める時刻と完成状態になる時刻を指定します。</td>
+</tr>
+<tr>
+<td>領域 / 境界ぼかし</td>
+<td>入力領域全体 / 10px</td>
+<td>曇りを適用する範囲と、その境界を周囲へなじませる幅を調整します。</td>
+</tr>
+<tr>
+<td>曇り量 / ぼかし量 / 色の混合量</td>
+<td>90% / 10px / 10%</td>
+<td>曇りの強さ、曇った部分のぼかし、指定色を混ぜる割合を調整します。</td>
+</tr>
+<tr><td>曇りノイズ</td><td>10%</td><td>曇り色に濃淡を加えます。0%で無効になります。</td></tr>
+<tr>
+<td>ブラシ / 連続拭き</td>
+<td>手形 / ON</td>
+<td>拭き取りに使う形状を選び、手形・靴跡・ユーザー画像の跡を移動に沿ってつなぎます。</td>
+</tr>
+<tr>
+<td>円の直径 / 楕円の幅・高さ / 四角形の幅・高さ</td>
+<td>500px / 25×50px / 100×620px</td>
+<td>生成形状の大きさを入力素材上のピクセル数で指定します。</td>
+</tr>
+<tr>
+<td>サイズ倍率</td>
+<td>50%</td>
+<td>手形、靴跡、ユーザー画像を、PNG元キャンバスの幅・高さを基準に等率で拡大縮小します。</td>
+</tr>
+<tr>
+<td>左右反転 / 回転角</td>
+<td>ON / -30°</td>
+<td>手形を反転し、ブラシの向きを調整します。</td>
+</tr>
+<tr>
+<td>回転追従</td>
+<td>100%</td>
+<td>移動方向へブラシの向きを合わせる割合を調整します。</td>
+</tr>
+<tr>
+<td>外側の水滴量 / 水滴の濃さ</td>
+<td>50% / 100%</td>
+<td>拭き取り後も残る外側の水滴の個数と、輪郭、ハイライト、影の見え方を調整します。</td>
+</tr>
+<tr><td>水滴サイズ</td><td>100%</td><td>水滴の大きさを調整します。</td></tr>
+<tr><td>水滴の動き / 水滴の見た目</td><td>簡易物理 / リアル（屈折）</td><td>大きさに応じて滑る水滴に、背景の縮小像と歪みを描きます。</td></tr>
+<tr><td>輪郭の濃さ</td><td>30%</td><td>水滴と水筋の暗い縁を調整します。</td></tr>
+<tr><td>滑りやすさ / 雨の補給</td><td>100% / 200%</td><td>滴の滑り始めやすさと、追加の雨の補給量を調整します。簡易物理で使います。</td></tr>
+<tr><td>垂れる速さ / 水筋の長さ</td><td>100% / 100%</td><td>滴の動く速さと、後ろに残す水筋の長さを調整します。</td></tr>
+<tr>
+<td>水滴を垂らす / 水滴の合体 / 雨の降り始め</td>
+<td>すべてON</td>
+<td>水滴の落下、接触した水滴の吸収、水滴ごとの出現時刻の分散を切り替えます。</td>
+</tr>
+<tr>
+<td>出現開始時間 / 出現期間</td>
+<td>1秒 / 10秒</td>
+<td>水滴が現れ始める時刻と、水滴ごとの初回出現時刻を分散する期間を指定します。</td>
+</tr>
+</tbody></table></div>
+<blockquote class="callout">
+<p><strong>「連続拭き」の意味</strong></p>
+<p>手形・靴跡・ユーザー画像の跡を移動に沿ってつなげる機能です。
+拭く動作を繰り返す機能ではありません。
+一回で拭くか往復するかは「拭き方」、往復する回数は「往復回数」で指定します。</p>
+</blockquote>
+<blockquote class="callout">
+<p><strong>YMM4の「デフォルトに設定」を使った場合</strong></p>
+<p>現在の設定が、次に新しく追加する同じエフェクトの初期設定として使われます。
+上の表は、YMM4側で本エフェクトのデフォルトを変更していない場合の値です。
+すでに配置済みのエフェクトや、保存済みプロジェクトの設定は変更されません。</p>
+</blockquote>
+      </section>
+
+      <section class="section" id="license">
+        <p class="section-kicker">20 / GUIDE</p>
+        <h2>ライセンスとソースコード</h2>
+        <p>本プラグイン固有の配布ファイルには、Mozilla Public License 2.0（<code>MPL-2.0</code>）を適用します。詳しい条件は<code>LICENSE.txt</code>、利用している第三者要素は<code>THIRD_PARTY_NOTICES.md</code>、組み込み画像の由来は<code>ASSET_PROVENANCE.md</code>を確認してください。</p>
+        <p>対応するソースコードの入手先は、配布物に同梱された<code>SOURCE_CODE.txt</code>を参照してください。ソースを変更して再配布する場合は、MPL-2.0の条件に従ってください。</p>
+      </section>
+
+      <section class="section" id="disclaimer">
+        <p class="section-kicker">21 / GUIDE</p>
+        <h2>免責事項</h2>
+<p>本プラグインは、Mine-Techが開発した非公式の第三者製YMM4プラグインです。
+利用前に、重要なYMM4プロジェクトと本プラグインの登録データをバックアップしてください。</p>
+<p>本プラグインは現状のまま提供され、動作や特定の用途への適合を保証するものではありません。
+利用によって生じた損害について、適用される法令で認められる範囲で、開発者は責任を負いません。
+詳しい利用条件は、プラグインに同梱される<code>LICENSE.txt</code>を確認してください。</p>
+      </section>
+    </main>
+  </div>
+  <footer>
+    <p>雫と拭痕 – RainDrop &amp; GlassWipe for YMM4 ユーザーズマニュアル · by Mine-Tech</p>
+    <p>内容基準日：2026年9月26日</p>
+  </footer>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeButton = document.getElementById("themeButton");
+      const printButton = document.getElementById("printButton");
+      const tocButton = document.getElementById("tocButton");
+      const toc = document.getElementById("toc");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      root.dataset.theme = prefersDark.matches ? "dark" : "light";
+
+      const currentTheme = () => root.dataset.theme || (prefersDark.matches ? "dark" : "light");
+
+      const updateThemeButton = () => {
+        const isDark = currentTheme() === "dark";
+        themeButton.setAttribute("aria-pressed", String(isDark));
+        themeButton.title = isDark ? "明るい配色へ切り替えます" : "暗い配色へ切り替えます";
+      };
+
+      themeButton.addEventListener("click", () => {
+        root.dataset.theme = currentTheme() === "dark" ? "light" : "dark";
+        updateThemeButton();
+      });
+
+      printButton.addEventListener("click", () => window.print());
+
+      tocButton.addEventListener("click", () => {
+        const isOpen = toc.classList.toggle("is-open");
+        tocButton.setAttribute("aria-expanded", String(isOpen));
+        tocButton.textContent = isOpen ? "目次を閉じる" : "目次を表示";
+      });
+
+      toc.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          toc.classList.remove("is-open");
+          tocButton.setAttribute("aria-expanded", "false");
+          tocButton.textContent = "目次を表示";
+        });
+      });
+
+      const sectionLinks = new Map(
+        [...toc.querySelectorAll("a[href^='#']")].map((link) => [link.getAttribute("href").slice(1), link])
+      );
+
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+          if (!visible) {
+            return;
+          }
+
+          sectionLinks.forEach((link, id) => {
+            if (id === visible.target.id) {
+              link.setAttribute("aria-current", "true");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
+        }, {
+          rootMargin: "-10% 0px -72% 0px",
+          threshold: [0.05, 0.2, 0.5]
+        });
+
+        document.querySelectorAll("main > section[id]").forEach((section) => observer.observe(section));
+      }
+
+      updateThemeButton();
+    })();
+  </script>
+</body>
+</html>

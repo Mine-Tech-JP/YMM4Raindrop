@@ -1,0 +1,6 @@
+.vs/
+**/bin/
+**/obj/
+Directory.Build.props
+tmp/
+src/YMM4GlassWipe/Shaders/*.cso

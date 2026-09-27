@@ -1,0 +1,8 @@
+<!-- SPDX-License-Identifier: MPL-2.0 -->
+
+<Project>
+  <PropertyGroup>
+    <!-- このファイルをDirectory.Build.propsへコピーし、末尾の\を含むYMM4フォルダを指定する。 -->
+    <YMM4DirPath>C:\Path\To\YukkuriMovieMaker4L\</YMM4DirPath>
+  </PropertyGroup>
+</Project>
